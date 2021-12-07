@@ -5,10 +5,17 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import pojo.GetCourse;
+import pojo.WebAutomation;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static java.util.Arrays.asList;
 
 
 public class OauthTest {
@@ -72,16 +79,28 @@ public class OauthTest {
         String courseTitleToFind = "SoapUI Webservices testing";
         for (int i = 0; i< response.getCourses().getApi().size() ; i++){
             //System.out.println(response.getCourses().getApi().get(i).getCourseTitle());
-            if (response.getCourses().getApi().get(i).getCourseTitle().toString() == courseTitleToFind.toString()){
+            if (response.getCourses().getApi().get(i).getCourseTitle().equalsIgnoreCase(courseTitleToFind)) {
                 String priceCourse = response.getCourses().getApi().get(i).getPrice();
                 System.out.println(priceCourse);
                 break;
-            } else {
-                System.out.println("Not course Found");
-                System.out.println("Response => " + response.getCourses().getApi().get(i).getCourseTitle() );
-                System.out.println("Expected => " + courseTitleToFind);
             }
         }
+
+        String[] courseTitles = {
+                "Selenium Webdriver Java",
+                "Cypress",
+                "Protractor"
+        };
+
+        /*** Get the course name of Web Automation***/
+        ArrayList<String> a = new ArrayList<String>();
+        List<WebAutomation> webAutomationList = response.getCourses().getWebAutomation();
+        for (int i = 0; i < webAutomationList.size() ; i++ ) {
+            a.add(webAutomationList.get(i).getCourseTitle());
+        }
+        List<String> expectedList = Arrays.asList(courseTitles);
+
+        Assert.assertTrue(a.equals(expectedList));
 
     }
 }
